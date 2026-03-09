@@ -22,11 +22,50 @@
 
         <nav class="nav" id="nav">
 
-            <a href="#">Inicio</a>
-            <a href="#">Servicios</a>
-            <a href="#">Entrenamiento</a>
-            <a href="#">Equipos</a>
-            <a href="#">Nosotros</a>
+            <ul class="menu">
+
+                <li><a href="#" class="active">Inicio</a></li>
+
+                <li class="dropdown">
+                    <a href="#">Servicios <i class="fa-solid fa-chevron-down"></i></a>
+
+                    <ul class="submenu">
+                        <li><a href="#">Inspección de Soldaduras</a></li>
+                        <li><a href="#">NDT Equipos en Operación</a></li>
+                        <li><a href="#">Supervisión y Control de Calidad</a></li>
+                    </ul>
+
+                </li>
+
+                <li><a href="#">Entrenamiento</a></li>
+
+                <li class="dropdown">
+                    <a href="#">Equipos <i class="fa-solid fa-chevron-down"></i></a>
+
+                    <ul class="submenu">
+                        <li><a href="#">Venta de Equipos</a></li>
+                        <li><a href="#">Alquiler de Equipos</a></li>
+                    </ul>
+
+                </li>
+
+                <li class="dropdown">
+
+                    <a href="#">Cursos <i class="fa-solid fa-chevron-down"></i></a>
+
+                    <ul class="submenu">
+                        <li><a href="#">Certificaciones</a></li>
+                    </ul>
+
+                </li>
+
+                <li><a href="#">Clientes</a></li>
+
+                <li><a href="#">Nosotros</a></li>
+
+                <li><a href="#">Contáctanos</a></li>
+
+            </ul>
 
         </nav>
 
@@ -43,8 +82,8 @@
         <div class="hero-equipment">
 
             <img src="IMG/equipo1.png" class="equipment active">
-            <img src="img/equipo2.png" class="equipment">
-            <img src="img/equipo3.png" class="equipment">
+            <img src="IMG/equipo2.png">
+            <img src="IMG/equipo3.png">
 
         </div>
 
@@ -63,6 +102,135 @@
         </div>
 
     </section>
+
+    <section class="catalogo">
+
+        <h2 class="titulo-seccion">Cursos Disponibles</h2>
+
+        <div class="catalogo-grid">
+
+            <div class="producto">
+                <img src="IMG/vt.jpg" alt="Curso VT">
+                <h3>Inspección Visual VT</h3>
+                <p class="precio">$350</p>
+                <button onclick="agregarCarrito('Curso VT',350)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/pt.jpg" alt="Curso PT">
+                <h3>Líquidos Penetrantes PT</h3>
+                <p class="precio">$380</p>
+                <button onclick="agregarCarrito('Curso PT',380)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/mt.jpg" alt="Curso MT">
+                <h3>Partículas Magnéticas MT</h3>
+                <p class="precio">$400</p>
+                <button onclick="agregarCarrito('Curso MT',400)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/ut.jpg" alt="Curso UT">
+                <h3>Ultrasonido Industrial UT</h3>
+                <p class="precio">$450</p>
+                <button onclick="agregarCarrito('Curso UT',450)">Agregar al carrito</button>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="catalogo catalogo-equipos">
+
+        <h2 class="titulo-seccion">Venta de Equipos</h2>
+
+        <div class="catalogo-grid">
+
+            <div class="producto">
+                <img src="IMG/omnican.jpg">
+                <h3>Olympus Omniscan MX2</h3>
+                <p class="precio">$25,000</p>
+                <button onclick="agregarCarrito('Omniscan MX2',25000)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/alphagage.jpg">
+                <h3>Sonatest Alphagage+</h3>
+                <p class="precio">$9,500</p>
+                <button onclick="agregarCarrito('Alphagage+',9500)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/mastercan.jpg">
+                <h3>Sonatest Mastercan D70</h3>
+                <p class="precio">$12,000</p>
+                <button onclick="agregarCarrito('Mastercan D70',12000)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/prisma.jpg">
+                <h3>Sonatest Prisma</h3>
+                <p class="precio">$18,500</p>
+                <button onclick="agregarCarrito('Prisma',18500)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/veo.jpg">
+                <h3>Sonatest VEO+</h3>
+                <p class="precio">$21,000</p>
+                <button onclick="agregarCarrito('VEO+',21000)">Agregar al carrito</button>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="catalogo catalogo-alquiler">
+
+        <h2 class="titulo-seccion">Alquiler de Equipos</h2>
+
+        <div class="catalogo-grid">
+
+            <div class="producto">
+                <img src="IMG/omnican.jpg">
+                <h3>Olympus Omniscan MX2</h3>
+                <p class="precio">$350 / día</p>
+                <button onclick="agregarCarrito('Alquiler Omniscan MX2',350)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/videoscopio.jpg">
+                <h3>Videoscopio Industrial</h3>
+                <p class="precio">$150 / día</p>
+                <button onclick="agregarCarrito('Videoscopio',150)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/yugo.jpg">
+                <h3>Yugo Magnético</h3>
+                <p class="precio">$90 / día</p>
+                <button onclick="agregarCarrito('Yugo Magnético',90)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/dureza.jpg">
+                <h3>Medidor de Dureza Leeb</h3>
+                <p class="precio">$120 / día</p>
+                <button onclick="agregarCarrito('Medidor Dureza Leeb',120)">Agregar al carrito</button>
+            </div>
+
+            <div class="producto">
+                <img src="IMG/espesor.jpg">
+                <h3>Medidor de Espesor Olympus</h3>
+                <p class="precio">$110 / día</p>
+                <button onclick="agregarCarrito('Medidor Espesor',110)">Agregar al carrito</button>
+            </div>
+
+        </div>
+
+    </section>
+
 
     <footer class="footer">
 
@@ -132,7 +300,7 @@
 
                     <li>
                         <i class="fa-solid fa-phone"></i>
-                        934 802 982 / 951 264 490
+                        989 848 075 / 951 264 490
                     </li>
 
                     <li>
@@ -169,11 +337,33 @@
             ¡Contactanos!
         </div>
 
-        <a href="https://wa.me/51934802982?text=Hola%20quiero%20información" class="whatsapp-button" target="_blank">
+        <a href="https://wa.me/51951264490?text=Hola%20quiero%20información" class="whatsapp-button" target="_blank">
 
             <img src="IMG/whatsapp.svg">
 
         </a>
+
+    </div>
+
+    <!-- ICONO CARRITO -->
+    <div class="carrito-icono" onclick="toggleCarrito()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="contador-carrito">0</span>
+    </div>
+
+    <!-- PANEL CARRITO -->
+    <div class="carrito-panel" id="carrito-panel">
+
+        <div class="carrito-header">
+            <h3>Carrito</h3>
+            <button class="cerrar-carrito" onclick="toggleCarrito()">✖</button>
+        </div>
+
+        <ul id="lista-carrito"></ul>
+
+        <p id="total">Total: $0</p>
+
+        <button class="comprar" onclick="comprarWhatsapp()">Comprar por WhatsApp</button>
 
     </div>
 
