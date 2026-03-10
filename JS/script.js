@@ -1,16 +1,13 @@
 // MENU MOVIL
-
 const toggle = document.getElementById("menu-toggle");
 const nav = document.getElementById("nav");
+const menu = document.querySelector(".menu");
 
 toggle.addEventListener("click", () => {
 
-    nav.classList.toggle("active");
     menu.classList.toggle("active");
 
 });
-
-
 
 
 // SLIDER EQUIPOS
@@ -131,10 +128,3 @@ function eliminarProducto(index) {
 }
 
 //FUNCION CERRAR CARRITO
-function toggleCarrito() {
-
-    const panel = document.getElementById("carrito-panel");
-
-    panel.classList.toggle("active");
-
-}
