@@ -213,7 +213,7 @@ body {
 
 .hero {
 
-    height: 100vh;
+    min-height: 100vh;
 
     background: url("../IMG/HEAD-01.jpg") center/cover no-repeat;
 
@@ -316,38 +316,90 @@ body {
 .hero-equipment img {
 
     width: 100%;
-
     position: absolute;
 
     opacity: 0;
+    transform: scale(0.85) translateY(20px);
 
-    transition: opacity 1s ease;
+    transition:
+        opacity 1s ease,
+        transform 1.2s ease;
 
-    animation: float 6s ease-in-out infinite;
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.35));
 
 }
+
+
+/* IMAGEN ACTIVA */
 
 .hero-equipment img.active {
 
     opacity: 1;
+    transform: scale(1) translateY(0);
+
+    animation: float3D 6s ease-in-out infinite;
 
 }
 
 
 /* ANIMACION FLOTAR */
 
-@keyframes float {
+@keyframes float3D {
 
     0% {
-        transform: translateY(-10px);
+
+        transform: translateY(-8px) rotateY(-4deg);
+
     }
 
     50% {
-        transform: translateY(10px);
+
+        transform: translateY(10px) rotateY(4deg);
+
     }
 
     100% {
-        transform: translateY(-10px);
+
+        transform: translateY(-8px) rotateY(-4deg);
+
+    }
+
+}
+
+.hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 600px;
+    height: 600px;
+
+    background: radial-gradient(circle,
+            rgba(0, 153, 255, 0.25) 0%,
+            transparent 70%);
+
+    left: 0;
+    top: 20%;
+
+    filter: blur(80px);
+
+    animation: techGlow 8s infinite alternate;
+
+}
+
+@keyframes techGlow {
+
+    0% {
+
+        transform: scale(1);
+
+    }
+
+    100% {
+
+        transform: scale(1.2);
+
     }
 
 }
@@ -676,27 +728,44 @@ body {
     }
 
     .hero {
-
-        justify-content: center;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
 
         text-align: center;
 
-        padding: 40px;
+        padding: 110px 20px 40px;
 
     }
 
     .hero-equipment {
 
         position: relative;
+        top: 100px;
+        width: 85%;
+        max-width: 280px;
 
-        left: auto;
-        top: auto;
 
-        transform: none;
+        margin: 20px auto;
 
-        width: 280px;
+    }
 
-        margin-bottom: 30px;
+    .hero-equipment img {
+
+        position: absolute;
+
+        width: 100%;
+
+        left: 0;
+        top: 0;
+
+        opacity: 0;
+
+    }
+
+    .hero-equipment img.active {
+        position: relative;
+        opacity: 1;
 
     }
 
@@ -715,10 +784,7 @@ body {
 }
 
 /*CATALOGO DE CARRITO*/
-.catalogo {
-    padding: 80px 8%;
-    background: #f7f9fc;
-}
+
 
 .catalogo-equipos {
     background: white;

@@ -20,13 +20,7 @@ function changeEquipment() {
 
     equipment[current].classList.remove("active");
 
-    current++;
-
-    if (current >= equipment.length) {
-
-        current = 0;
-
-    }
+    current = (current + 1) % equipment.length;
 
     equipment[current].classList.add("active");
 
