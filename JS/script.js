@@ -120,5 +120,3 @@ function eliminarProducto(index) {
     actualizarCarrito();
 
 }
-
-//FUNCION CERRAR CARRITO
