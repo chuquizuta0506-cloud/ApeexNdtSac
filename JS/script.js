@@ -100,7 +100,7 @@ function comprarWhatsapp() {
 
     mensaje += "%0ATotal: $" + total;
 
-    window.open("https://wa.me/51951264490?text=" + mensaje);
+    window.open("https://wa.me/51989848075?text=" + mensaje);
 
 }
 
@@ -120,3 +120,28 @@ function eliminarProducto(index) {
     actualizarCarrito();
 
 }
+
+// mensaje por wsp
+
+document.getElementById("form-whatsapp").addEventListener("submit", function (e) {
+
+    e.preventDefault();
+
+    let nombre = document.getElementById("nombre").value;
+    let email = document.getElementById("email").value;
+    let telefono = document.getElementById("telefono").value;
+    let mensaje = document.getElementById("mensaje").value;
+
+    let texto = "Hola, quiero información desde la web APEEX:%0A%0A"
+        + "Nombre: " + nombre + "%0A"
+        + "Email: " + email + "%0A"
+        + "Teléfono: " + telefono + "%0A"
+        + "Mensaje: " + mensaje;
+
+    let numero = "51989848075";
+
+    let url = "https://wa.me/" + numero + "?text=" + texto;
+
+    window.open(url, "_blank");
+
+});

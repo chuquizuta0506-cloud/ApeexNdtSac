@@ -1,0 +1,95 @@
+/* SECCION CLIENTES */
+
+.clientes {
+
+    padding: 90px 8%;
+
+    background: #f5f7fa;
+
+}
+
+.clientes-container {
+
+    max-width: 1000px;
+
+    margin: auto;
+
+    text-align: center;
+
+}
+
+.titulo-clientes {
+
+    font-size: 34px;
+
+    color: #0a2c5a;
+
+    margin-bottom: 10px;
+
+}
+
+.clientes-descripcion {
+
+    max-width: 650px;
+
+    margin: auto;
+
+    margin-bottom: 50px;
+
+    line-height: 1.6;
+
+    color: #555;
+
+}
+
+/* GRID LOGOS */
+
+.clientes-grid {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 60px;
+
+    flex-wrap: wrap;
+
+}
+
+/* CARD LOGO */
+
+.cliente-card {
+
+    background: white;
+
+    padding: 30px 40px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+    transition: 0.3s;
+
+}
+
+/* EFECTO HOVER */
+
+.cliente-card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+
+}
+
+/* LOGO */
+
+.cliente-card img {
+
+    width: 160px;
+
+    height: auto;
+
+    object-fit: contain;
+
+}

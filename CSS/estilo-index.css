@@ -254,7 +254,7 @@ body {
 /* HERO TEXTO */
 
 .hero-content {
-
+    text-shadow: 2px 2px 0 #000000, 2px 2px 0 #010036;
     max-width: 520px;
 
     color: white;
