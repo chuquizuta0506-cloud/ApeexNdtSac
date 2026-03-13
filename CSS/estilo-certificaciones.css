@@ -1,0 +1,17 @@
+.producto img {
+
+    height: 210px;
+    object-fit: cover;
+
+}
+
+.producto h3 {
+
+    font-size: 15px;
+    min-height: 40px;
+
+}
+
+.catalogo {
+    padding: 30px 8% 80px;
+}
