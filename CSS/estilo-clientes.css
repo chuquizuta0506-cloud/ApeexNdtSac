@@ -94,3 +94,11 @@
 
 }
 
+
+
+
+@media (max-width: 768px) {
+    .clientes { padding: 45px 6%; }
+    .cliente-card { padding: 22px 24px; }
+    .clientes-grid { gap: 24px; }
+}

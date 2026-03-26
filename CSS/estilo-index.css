@@ -1089,3 +1089,95 @@ body {
     margin-top: -10px;
 
 }
+
+
+
+/* ===== MEJORAS GENERALES APEEX ===== */
+html { scroll-behavior: smooth; }
+body.menu-open { overflow: hidden; }
+.logo img { max-width: 100%; object-fit: contain; }
+img, iframe { max-width: 100%; }
+.lang-switch { display: flex; align-items: center; gap: 6px; margin-left: 18px; }
+.lang-switch button {
+    border: 1px solid #d6dfea; background: #ffffff; color: #0a2c5a; border-radius: 999px;
+    padding: 8px 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.25s ease;
+}
+.lang-switch button:hover, .lang-switch button.active { background: #0a2c5a; color: #ffffff; border-color: #0a2c5a; }
+.site-toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(24px);
+    background: #0a2c5a; color: #ffffff; padding: 14px 18px; border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,.22); z-index: 2000; opacity: 0; pointer-events: none;
+    transition: 0.3s ease; max-width: min(92vw, 420px); text-align: center; line-height: 1.5; font-size: 14px;
+}
+.site-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.site-toast.error { background: #9f1f1f; }
+.contact a, .footer a { word-break: break-word; }
+.category-links { padding: 70px 8%; background: #f5f7fa; }
+.category-intro { max-width: 760px; margin: 0 auto 36px; text-align: center; }
+.category-intro p { color: #555; line-height: 1.7; }
+.category-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+.category-card {
+    background: #ffffff; border-radius: 18px; padding: 34px 28px; text-decoration: none; color: #1e1e1e;
+    box-shadow: 0 12px 28px rgba(0,0,0,.08); transition: 0.3s ease; display: flex; flex-direction: column; gap: 14px;
+}
+.category-card i { font-size: 34px; color: #0099ff; }
+.category-card h2 { font-size: 28px; color: #0a2c5a; }
+.category-card p { color: #555; line-height: 1.7; }
+.category-card span { color: #0099ff; font-weight: 700; margin-top: auto; }
+.category-card:hover { transform: translateY(-8px); box-shadow: 0 18px 38px rgba(0,0,0,.14); }
+.contacto-form button:disabled, .btn-primary:disabled { opacity: .75; cursor: wait; }
+.carrito-panel { overflow-y: auto; }
+
+@media (max-width: 1024px) {
+    .header { padding: 14px 22px; gap: 12px; }
+    .menu { gap: 22px; }
+    .hero { padding: 110px 40px 60px; }
+    .hero-content h1 { font-size: 48px; }
+    .hero-equipment { width: 420px; left: 2%; }
+}
+@media (max-width: 768px) {
+    .header { padding: 12px 16px; }
+    .logo img { height: 42px; }
+    .lang-switch { margin-left: auto; margin-right: 10px; }
+    .menu {
+        top: 68px; right: -100%; width: min(320px, 100%); height: calc(100vh - 68px);
+        overflow-y: auto; box-shadow: -12px 0 28px rgba(0,0,0,.14); align-items: stretch; padding-bottom: 28px;
+    }
+    .menu li { width: 100%; }
+    .menu a { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .submenu {
+        display: none; position: static; min-width: 100%; box-shadow: none; border-radius: 0; padding: 8px 0 0 12px;
+        opacity: 1; visibility: visible; transform: none; background: transparent;
+    }
+    .dropdown.open .submenu { display: block; }
+    .submenu a { padding: 10px 6px; }
+    .hero { min-height: auto; }
+    .hero-content h1 { font-size: 32px; }
+    .hero-content h2 { font-size: 20px; }
+    .hero-content p { font-size: 15px; }
+    .hero-moderno { padding: 54px 16px; }
+    .hero-moderno-content h1 { font-size: 30px; letter-spacing: 1px; }
+    .catalogo, .catalogo-equipos, .catalogo-alquiler, .clientes, .contacto-section, .mapa-section,
+    .entrenamiento, .metodos-entrenamiento, .servicio-soldadura, .metodos-inspeccion, .ventajas,
+    .sectores, .nosotros-info, .mision-vision, .category-links { padding-left: 6%; padding-right: 6%; }
+    .titulo-seccion, .titulo-clientes, section h2 { font-size: 28px; }
+    .producto img, .equipo-card img { height: 190px; }
+    .whatsapp-container { right: 16px; bottom: 16px; }
+    .whatsapp-message { display: none; }
+    .whatsapp-button { width: 56px; height: 56px; }
+    .whatsapp-button img { width: 30px; }
+    .carrito-icono { right: 16px; bottom: 84px; width: 54px; height: 54px; font-size: 22px; }
+    .carrito-panel { width: 100%; max-width: 100%; right: -100%; padding: 22px 18px; }
+    .category-card h2 { font-size: 24px; }
+}
+@media (max-width: 480px) {
+    .lang-switch { gap: 4px; margin-right: 6px; }
+    .lang-switch button { padding: 7px 10px; font-size: 11px; }
+    .hero { padding: 96px 16px 36px; }
+    .hero-equipment { width: 92%; max-width: 260px; }
+    .hero-content h1 { font-size: 28px; }
+    .hero-content h2 { font-size: 18px; }
+    .catalogo-grid, .cards-grid, .ventajas-grid, .sectores-grid, .metodos-grid, .lista-grid, .equipos-container, .clientes-grid { gap: 18px; }
+    .producto, .card, .metodo-card, .category-card { padding: 22px 18px; }
+    .titulo-seccion, .titulo-clientes, section h2, .claim-info h2, .claim-form-section h2, .legal-content h2, .terms-content h2 { font-size: 24px; }
+}

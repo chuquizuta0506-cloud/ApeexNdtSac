@@ -73,3 +73,9 @@
     background: #e6ac00;
 
 }
+
+
+@media (max-width: 600px) {
+    .equipos-venta { padding: 60px 6%; }
+    .equipo-card { padding: 20px; }
+}

@@ -131,3 +131,13 @@
     border-radius: 10px;
 
 }
+
+
+@media (max-width: 900px) {
+    .entrenamiento-wrapper { flex-direction: column; }
+    .entrenamiento-texto h2 { font-size: 28px; }
+}
+@media (max-width: 600px) {
+    .entrenamiento-img img { height: 280px; }
+    .metodo-card { padding: 24px 20px; }
+}

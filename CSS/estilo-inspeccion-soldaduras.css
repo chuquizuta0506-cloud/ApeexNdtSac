@@ -300,3 +300,14 @@ section h2 {
     transform: translateY(-8px);
 
 }
+
+
+@media (max-width: 900px) {
+    .servicio-container { flex-direction: column; }
+    .servicio-texto h2 { font-size: 30px; }
+}
+@media (max-width: 600px) {
+    .servicio-img img { height: 180px; }
+    .alcance-servicio { padding: 60px 6%; }
+    .alcance-servicio ul { grid-template-columns: 1fr; }
+}

@@ -15,3 +15,9 @@
 .catalogo {
     padding: 30px 8% 80px;
 }
+
+
+@media (max-width: 768px) {
+    .catalogo { padding: 24px 6% 70px; }
+    .producto h3 { min-height: auto; font-size: 16px; }
+}
