@@ -114,3 +114,56 @@ if (formWhatsapp) {
         window.open(url, "_blank");
     });
 }
+
+//PARA CORRELATIVO DEL FORMULARIO A CORREO
+
+document.addEventListener("DOMContentLoaded", function () {
+    const fechaInput = document.getElementById("fecha");
+    const horaInput = document.getElementById("hora");
+    const codigoInput = document.getElementById("codigo");
+    const form = document.getElementById("form-reclamaciones");
+
+    function completarFechaHora() {
+        const ahora = new Date();
+
+        const dia = String(ahora.getDate()).padStart(2, "0");
+        const mes = String(ahora.getMonth() + 1).padStart(2, "0");
+        const anio = ahora.getFullYear();
+
+        const horas = String(ahora.getHours()).padStart(2, "0");
+        const minutos = String(ahora.getMinutes()).padStart(2, "0");
+        const segundos = String(ahora.getSeconds()).padStart(2, "0");
+
+        fechaInput.value = `${dia}/${mes}/${anio}`;
+        horaInput.value = `${horas}:${minutos}:${segundos}`;
+    }
+
+    function generarCodigoVisual() {
+        let ultimoNumero = localStorage.getItem("apeex_reclamo_correlativo");
+
+        if (!ultimoNumero) {
+            ultimoNumero = 0;
+        }
+
+        const siguienteNumero = parseInt(ultimoNumero, 10) + 1;
+        const correlativo = String(siguienteNumero).padStart(6, "0");
+
+        codigoInput.value = `APEEX-LR-${correlativo}`;
+    }
+
+    completarFechaHora();
+    generarCodigoVisual();
+
+    setInterval(completarFechaHora, 1000);
+
+    form.addEventListener("submit", function () {
+        let ultimoNumero = localStorage.getItem("apeex_reclamo_correlativo");
+
+        if (!ultimoNumero) {
+            ultimoNumero = 0;
+        }
+
+        const siguienteNumero = parseInt(ultimoNumero, 10) + 1;
+        localStorage.setItem("apeex_reclamo_correlativo", siguienteNumero);
+    });
+});
