@@ -355,8 +355,34 @@ const I18N_MAP = {
   "Ver equipos en venta": "View equipment for sale",
   "Opciones de alquiler para proyectos, paradas de planta e inspecciones puntuales.": "Rental options for projects, plant shutdowns, and specific inspections.",
   "Ver equipos en alquiler": "View rental equipment"
+
 };
+Object.assign(I18N_MAP, {
+  "Teléfono:": "Phone:",
+  "Correo:": "Email:",
+  "Nombre:": "Name:",
+  "Mensaje:": "Message:",
+  "Bolt Inspection": "Bolt Inspection",
+  "Time Of Flight Diffraction": "Time Of Flight Diffraction",
+  "IRIS Ultrasonic Testing": "IRIS Ultrasonic Testing",
+  "MFL": "MFL",
+  "TOFD": "TOFD",
+  "APEEX NDT SAC": "APEEX NDT SAC",
+  "OLYMPUS": "OLYMPUS",
+  "PRISMA": "PRISMA",
+  "VEO+": "VEO+",
+  "MASTERSCAN D70": "MASTERSCAN D70",
+  "ALPHAGAGE+": "ALPHAGAGE+",
+  "B-SCAN RF": "B-SCAN RF",
+  "Olympus Omniscan MX2": "Olympus Omniscan MX2",
+  "Sonatest Prisma": "Sonatest Prisma",
+  "Sonatest VEO+": "Sonatest VEO+",
+  "Sonatest Mastercan D70": "Sonatest Masterscan D70",
+  "Sonatest Alphagage+": "Sonatest Alphagage+",
+  "OMNISCAN MX2": "OMNISCAN MX2"
+});
 const I18N_ATTRS = [
+
   {
     "selector": "#nombre[name='nombre']",
     "attr": "placeholder",
@@ -445,6 +471,11 @@ const UI_MESSAGES = {
 const EN_TO_ES_MAP = Object.fromEntries(Object.entries(I18N_MAP).map(([es, en]) => [en, es]));
 const APEEX_LANG_KEY = "apeex_lang";
 const APEEX_CART_KEY = "apeex_cart";
+const TRANSLATABLE_ATTRS = ["placeholder", "value", "title", "aria-label", "alt"];
+const ORIGINAL_TEXT_NODES = [];
+const ORIGINAL_ATTRS = [];
+let originalsCaptured = false;
+let originalDocumentTitle = "";
 let currentLang = localStorage.getItem(APEEX_LANG_KEY) || "es";
 let carrito = [];
 let total = 0;
@@ -453,8 +484,56 @@ function getUiText(key) {
   return (UI_MESSAGES[currentLang] && UI_MESSAGES[currentLang][key]) || (UI_MESSAGES.es && UI_MESSAGES.es[key]) || "";
 }
 
+
 function normalizeSpaces(text) {
   return (text || "").replace(/\s+/g, " ").trim();
+}
+
+function withOriginalWhitespace(original, translated) {
+  const leading = (original.match(/^\s*/) || [""])[0];
+  const trailing = (original.match(/\s*$/) || [""])[0];
+  return `${leading}${translated}${trailing}`;
+}
+
+function captureOriginalTranslations() {
+  if (originalsCaptured || !document.body) return;
+  originalsCaptured = true;
+  originalDocumentTitle = document.title;
+
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      const parent = node.parentElement;
+      if (!parent) return NodeFilter.FILTER_REJECT;
+      if (["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+      if (parent.closest(".lang-switch")) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    ORIGINAL_TEXT_NODES.push({
+      node,
+      original: node.nodeValue,
+      normalized: normalizeSpaces(node.nodeValue)
+    });
+  }
+
+  document.querySelectorAll("body *").forEach(el => {
+    if (el.closest(".lang-switch")) return;
+    TRANSLATABLE_ATTRS.forEach(attr => {
+      if (!el.hasAttribute(attr)) return;
+      const value = el.getAttribute(attr);
+      if (!value || !normalizeSpaces(value)) return;
+      ORIGINAL_ATTRS.push({
+        el,
+        attr,
+        original: value,
+        normalized: normalizeSpaces(value)
+      });
+    });
+  });
 }
 
 function showSiteToast(message, type = "success") {
@@ -473,29 +552,29 @@ function showSiteToast(message, type = "success") {
   showSiteToast._timer = setTimeout(() => toast.classList.remove("show"), 3000);
 }
 
+
 function updateTextNodes(lang) {
-  const map = lang === "en" ? I18N_MAP : EN_TO_ES_MAP;
-  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
-    acceptNode(node) {
-      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-      const parent = node.parentElement;
-      if (!parent) return NodeFilter.FILTER_REJECT;
-      if (["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
-      if (parent.closest(".lang-switch")) return NodeFilter.FILTER_REJECT;
-      return NodeFilter.FILTER_ACCEPT;
-    }
-  });
-  const nodes = [];
-  while (walker.nextNode()) nodes.push(walker.currentNode);
-  nodes.forEach(node => {
-    const trimmed = normalizeSpaces(node.nodeValue);
-    if (map[trimmed]) {
-      node.nodeValue = node.nodeValue.replace(trimmed, map[trimmed]);
+  ORIGINAL_TEXT_NODES.forEach(item => {
+    if (!item.node || !item.node.parentNode) return;
+    if (lang === "en" && I18N_MAP[item.normalized]) {
+      item.node.nodeValue = withOriginalWhitespace(item.original, I18N_MAP[item.normalized]);
+    } else {
+      item.node.nodeValue = item.original;
     }
   });
 }
 
+
 function updateAttributes(lang) {
+  ORIGINAL_ATTRS.forEach(item => {
+    if (!item.el || !item.el.isConnected) return;
+    if (lang === "en" && I18N_MAP[item.normalized]) {
+      item.el.setAttribute(item.attr, I18N_MAP[item.normalized]);
+    } else {
+      item.el.setAttribute(item.attr, item.original);
+    }
+  });
+
   I18N_ATTRS.forEach(item => {
     document.querySelectorAll(item.selector).forEach(el => {
       el.setAttribute(item.attr, lang === "en" ? item.en : item.es);
@@ -538,13 +617,19 @@ function updateCartUI() {
   if (comprarBtn) comprarBtn.textContent = getUiText("buyWhatsApp");
 }
 
+
 function applyLanguage(lang) {
   currentLang = lang === "en" ? "en" : "es";
   localStorage.setItem(APEEX_LANG_KEY, currentLang);
   document.documentElement.lang = currentLang;
-  const titleMap = currentLang === "en" ? I18N_MAP : EN_TO_ES_MAP;
-  const normalizedTitle = normalizeSpaces(document.title);
-  if (titleMap[normalizedTitle]) document.title = titleMap[normalizedTitle];
+
+  const normalizedTitle = normalizeSpaces(originalDocumentTitle || document.title);
+  if (currentLang === "en" && I18N_MAP[normalizedTitle]) {
+    document.title = I18N_MAP[normalizedTitle];
+  } else {
+    document.title = originalDocumentTitle || document.title;
+  }
+
   updateTextNodes(currentLang);
   updateAttributes(currentLang);
   updateCartUI();
@@ -787,6 +872,7 @@ function initWhatsappForm() {
 document.addEventListener("DOMContentLoaded", () => {
   injectLanguageSwitcher();
   setupMenu();
+  captureOriginalTranslations();
   loadCart();
   updateCartUI();
   initEquipmentSlider();
