@@ -167,3 +167,52 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("apeex_reclamo_correlativo", siguienteNumero);
     });
 });
+
+// PARA CONTACTANOS
+
+
+//PARA ENVIAR FORMULARIO CONTACTANOS CON MENSAJE DE EMERGENTE PRO
+
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("form-contacto");
+    const mensajeExito = document.getElementById("mensaje-exito");
+    const boton = document.getElementById("btn-enviar-contacto");
+
+    if (form && mensajeExito && boton) {
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            boton.disabled = true;
+            boton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("https://formsubmit.co/ajax/APEEXNDTSAC@gmail.com", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    form.reset();
+                    mensajeExito.classList.remove("oculto");
+                    alert("Gracias por comunicarse con nosotros. Su formulario fue enviado con éxito.");
+                } else {
+                    alert("No se pudo enviar el formulario. Por favor, inténtelo nuevamente.");
+                    console.error(data);
+                }
+            } catch (error) {
+                alert("Ocurrió un error al enviar el formulario. Verifique su conexión e inténtelo otra vez.");
+                console.error(error);
+            } finally {
+                boton.disabled = false;
+                boton.innerHTML = '<i class="fa-solid fa-envelope"></i> Enviar consulta';
+            }
+        });
+    }
+});

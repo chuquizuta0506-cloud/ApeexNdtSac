@@ -131,3 +131,69 @@
     }
 
 }
+
+/*FORMULARIO*/
+.check-privacidad {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.check-privacidad input {
+    width: auto;
+    margin-top: 4px;
+}
+
+.check-privacidad a {
+    color: #0a2c5a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.check-privacidad a:hover {
+    text-decoration: underline;
+}
+
+/*COMO FORMULARIO CON ALETRA PRO*/
+.check-privacidad {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.6;
+    margin: 12px 0 18px;
+}
+
+.check-privacidad input {
+    width: auto;
+    margin-top: 4px;
+}
+
+.check-privacidad a {
+    color: #0a2c5a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.check-privacidad a:hover {
+    text-decoration: underline;
+}
+
+.mensaje-exito {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: #eaf7ea;
+    color: #1f6b2a;
+    font-weight: 600;
+    line-height: 1.6;
+    border: 1px solid #b9e0bf;
+}
+
+.oculto {
+    display: none;
+}

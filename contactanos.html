@@ -140,29 +140,31 @@
 
                 <h2>Envíanos un mensaje</h2>
 
-                <form id="form-whatsapp">
+                <form id="form-contacto" class="form-contacto">
+                    <input type="hidden" name="_subject" value="Nuevo mensaje de contacto - Web APEEX NDT SAC">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="text" name="_honey" style="display:none">
 
-                    <input type="text" id="nombre" placeholder="Nombre completo" required>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre completo" required>
+                    <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+                    <input type="text" id="telefono" name="telefono" placeholder="Teléfono">
+                    <textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje..." rows="5"
+                        required></textarea>
 
-                    <input type="email" id="email" placeholder="Correo electrónico" required>
+                    <label class="check-privacidad">
+                        <input type="checkbox" required>
+                        He leído y acepto la
+                        <a href="politica-privacidad.html" target="_blank">Política de Privacidad</a>.
+                    </label>
 
-                    <input type="text" id="telefono" placeholder="Teléfono">
-
-                    <textarea id="mensaje" placeholder="Escribe tu mensaje..." rows="5"></textarea>
-
-                    <div class="check-privacidad">
-                        <label>
-                            <input type="checkbox" id="acepta-privacidad" required>
-                            He leído y acepto la
-                            <a href="politica-privacidad.html" target="_blank">Política de Privacidad</a>.
-                        </label>
-                    </div>
-
-                    <button type="submit">
-                        <i class="fa-brands fa-whatsapp"></i> ENVIAR CONSULTA
+                    <button type="submit" id="btn-enviar-contacto">
+                        <i class="fa-solid fa-envelope"></i> Enviar consulta
                     </button>
-
                 </form>
+
+                <div id="mensaje-exito" class="mensaje-exito oculto">
+                    Gracias por comunicarse con nosotros. Pronto estaremos respondiendo su solicitud.
+                </div>
 
             </div>
 
