@@ -731,54 +731,43 @@ body {
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-
         text-align: center;
-
-        padding: 110px 20px 40px;
-
+        padding: 110px 20px 50px;
+        gap: 18px;
     }
 
     .hero-equipment {
-
         position: relative;
-        top: 100px;
+        left: auto;
+        top: 0;
+        transform: none;
         width: 85%;
         max-width: 280px;
-
-
-        margin: 20px auto;
-
+        margin: 0 auto 22px;
     }
 
     .hero-equipment img {
-
         position: absolute;
-
         width: 100%;
-
         left: 0;
         top: 0;
-
         opacity: 0;
-
     }
 
     .hero-equipment img.active {
         position: relative;
         opacity: 1;
-
     }
 
     .hero-content {
-
         max-width: 100%;
-
+        margin-top: 0;
+        position: relative;
+        z-index: 3;
     }
 
     .hero-content h1 {
-
         font-size: 35px;
-
     }
 
 }
