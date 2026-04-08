@@ -379,8 +379,24 @@ Object.assign(I18N_MAP, {
   "Sonatest VEO+": "Sonatest VEO+",
   "Sonatest Mastercan D70": "Sonatest Masterscan D70",
   "Sonatest Alphagage+": "Sonatest Alphagage+",
-  "OMNISCAN MX2": "OMNISCAN MX2"
+  "OMNISCAN MX2": "OMNISCAN MX2",
+  "Soluciones destacadas": "Featured solutions",
+  "Explora cursos, venta y alquiler de equipos en una vista dinámica.": "Explore courses, equipment sales, and rentals in a dynamic rotating view.",
+  "Sección activa": "Active section",
+  "Catálogo principal": "Main catalog"
 });
+Object.assign(I18N_MAP, {
+  "APEEX EN NÚMEROS": "APEEX IN NUMBERS",
+  "Resultados que respaldan nuestro trabajo": "Results that support our work",
+  "Integramos inspección, entrenamiento y soporte técnico para responder con rapidez y criterio especializado a cada requerimiento industrial.": "We integrate inspection, training, and technical support to respond quickly and with specialized criteria to every industrial requirement.",
+  "Años de experiencia técnica": "Years of technical experience",
+  "Líneas de servicio especializadas": "Specialized service lines",
+  "Cursos y soluciones activas": "Active courses and solutions",
+  "Enfoque en calidad y confiabilidad": "Focus on quality and reliability",
+  "Desplazamiento automático de marcas para una lectura visual más dinámica.": "Automatic brand movement for a more dynamic visual experience.",
+  "Resultados": "Results"
+});
+
 const I18N_ATTRS = [
 
   {
@@ -448,7 +464,10 @@ const UI_MESSAGES = {
     "networkError": "Ocurrió un error al enviar el formulario. Verifique su conexión e inténtelo otra vez.",
     "claimCodePrefix": "APEEX-LR-",
     "buyWhatsApp": "Comprar por WhatsApp",
-    "cart": "Carrito"
+    "cart": "Carrito",
+    "saleLabel": "Venta",
+    "rentalLabel": "Alquiler",
+    "courseLabel": "Curso"
   },
   "en": {
     "addToCart": "Product added to cart.",
@@ -465,7 +484,10 @@ const UI_MESSAGES = {
     "networkError": "An error occurred while sending the form. Please check your connection and try again.",
     "claimCodePrefix": "APEEX-LR-",
     "buyWhatsApp": "Buy via WhatsApp",
-    "cart": "Cart"
+    "cart": "Cart",
+    "saleLabel": "Sale",
+    "rentalLabel": "Rental",
+    "courseLabel": "Course"
   }
 };
 const EN_TO_ES_MAP = Object.fromEntries(Object.entries(I18N_MAP).map(([es, en]) => [en, es]));
@@ -590,20 +612,48 @@ function updateLanguageButtons() {
   });
 }
 
+function inferItemType(item) {
+  if (item && item.tipo) return item.tipo;
+  const nombre = normalizeSpaces(item && item.nombre ? item.nombre : "").toLowerCase();
+  const alquilerKeys = [
+    "alquiler", "videoscopio", "yugo magnético", "yugo magnetico",
+    "medidor dureza leeb", "medidor espesor", "medidor de espesor olympus"
+  ];
+  if (Number(item && item.precio || 0) > 0) return "curso";
+  if (alquilerKeys.some(key => nombre.includes(key))) return "alquiler";
+  return "venta";
+}
+
+function getItemTypeLabel(tipo) {
+  if (tipo === "alquiler") return getUiText("rentalLabel");
+  if (tipo === "curso") return getUiText("courseLabel");
+  return getUiText("saleLabel");
+}
+
+function formatCartItemText(item) {
+  const tipo = inferItemType(item);
+  const translatedName = currentLang === "en" && I18N_MAP[item.nombre] ? I18N_MAP[item.nombre] : item.nombre;
+  const label = getItemTypeLabel(tipo);
+  const hasPrice = tipo === "curso" && Number(item.precio || 0) > 0;
+  return hasPrice
+    ? `<span><strong>${label}:</strong> ${translatedName} - $${Number(item.precio || 0).toLocaleString("en-US")}</span>`
+    : `<span><strong>${label}:</strong> ${translatedName}</span>`;
+}
+
 function updateCartUI() {
   const lista = document.getElementById("lista-carrito");
   const totalTexto = document.getElementById("total");
   const contador = document.getElementById("contador-carrito");
   const carritoHeader = document.querySelector(".carrito-header h3");
   const comprarBtn = document.querySelector(".comprar");
+  const hasPricedItems = carrito.some(item => inferItemType(item) === "curso" && Number(item.precio || 0) > 0);
 
   if (lista) {
     lista.innerHTML = "";
     carrito.forEach((item, index) => {
       const li = document.createElement("li");
       li.className = "item-carrito";
-      const translatedName = currentLang === "en" && I18N_MAP[item.nombre] ? I18N_MAP[item.nombre] : item.nombre;
-      li.innerHTML = `<span>${translatedName} - $${Number(item.precio || 0).toLocaleString("en-US")}</span>
+      li.innerHTML = `${formatCartItemText(item)}
         <button class="eliminar" type="button" data-index="${index}">X</button>`;
       lista.appendChild(li);
     });
@@ -611,7 +661,12 @@ function updateCartUI() {
       btn.addEventListener("click", () => eliminarProducto(Number(btn.dataset.index)));
     });
   }
-  if (totalTexto) totalTexto.textContent = `${getUiText("totalLabel")}${Number(total || 0).toLocaleString("en-US")}`;
+  if (totalTexto) {
+    totalTexto.textContent = hasPricedItems
+      ? `${getUiText("totalLabel")}${Number(total || 0).toLocaleString("en-US")}`
+      : "";
+    totalTexto.style.display = hasPricedItems ? "block" : "none";
+  }
   if (contador) contador.textContent = carrito.length;
   if (carritoHeader) carritoHeader.textContent = getUiText("cart");
   if (comprarBtn) comprarBtn.textContent = getUiText("buyWhatsApp");
@@ -634,7 +689,9 @@ function applyLanguage(lang) {
   updateAttributes(currentLang);
   updateCartUI();
   updateLanguageButtons();
+  refreshHomeCarousels();
   setActiveMenuLink();
+  window.dispatchEvent(new Event("resize"));
 }
 
 function injectLanguageSwitcher() {
@@ -710,6 +767,303 @@ function initEquipmentSlider() {
   }
 }
 
+const HOME_CAROUSEL_DATA = {
+  cursos: [
+    { nombre: "Ultrasonido Nivel I y II", tituloEs: "Curso de Ultrasonido Industrial Nivel I y II con Certificación", tituloEn: "Industrial Ultrasonic Testing Level I and II Course with Certification", precio: 600, tipo: "curso", img: "IMG/ut-nivel1-2.jpg", altEs: "Curso de Ultrasonido Industrial Nivel I y II con Certificación", altEn: "Industrial Ultrasonic Testing Level I and II Course with Certification" },
+    { nombre: "TOFD Nivel I y II", tituloEs: "Ultrasonido TOFD Nivel I y II", tituloEn: "TOFD Ultrasonic Testing Level I and II", precio: 750, tipo: "curso", img: "IMG/tofd-nivel1-2.jpeg", altEs: "Ultrasonido TOFD Nivel I y II", altEn: "TOFD Ultrasonic Testing Level I and II" },
+    { nombre: "Phased Array Avanzado", tituloEs: "Ultrasonido Avanzado Phased Array con Certificación", tituloEn: "Advanced Phased Array Ultrasonic Testing with Certification", precio: 1500, tipo: "curso", img: "IMG/paut-avanzado.jpeg", altEs: "Ultrasonido Avanzado Phased Array con Certificación", altEn: "Advanced Phased Array Ultrasonic Testing with Certification" },
+    { nombre: "Ultrasonido Industrial", tituloEs: "Ultrasonido Industrial", tituloEn: "Industrial Ultrasonic Testing", precio: 600, tipo: "curso", img: "IMG/ut-industrial.jpg", altEs: "Ultrasonido Industrial", altEn: "Industrial Ultrasonic Testing" },
+    { nombre: "Ultrasonido TOFD", tituloEs: "Ultrasonido TOFD", tituloEn: "TOFD Ultrasonic Testing", precio: 500, tipo: "curso", img: "IMG/tofd.jpg", altEs: "Ultrasonido TOFD", altEn: "TOFD Ultrasonic Testing" },
+    { nombre: "Arreglo de Fases", tituloEs: "Ultrasonido Arreglo de Fases", tituloEn: "Phased Array Ultrasonic Testing", precio: 500, tipo: "curso", img: "IMG/phased-array.jpg", altEs: "Ultrasonido Arreglo de Fases", altEn: "Phased Array Ultrasonic Testing" },
+    { nombre: "Medicion de Espesores", tituloEs: "Medición de Espesores", tituloEn: "Thickness Measurement", precio: 500, tipo: "curso", img: "IMG/medicion-espesores.jpg", altEs: "Medición de Espesores", altEn: "Thickness Measurement" }
+  ],
+  venta: [
+    { nombre: "Omniscan MX2", tituloEs: "Olympus Omniscan MX2", tituloEn: "Olympus Omniscan MX2", precio: 0, tipo: "venta", img: "IMG/omnican.jpg", altEs: "Olympus Omniscan MX2", altEn: "Olympus Omniscan MX2" },
+    { nombre: "Alphagage+", tituloEs: "Sonatest Alphagage+", tituloEn: "Sonatest Alphagage+", precio: 0, tipo: "venta", img: "IMG/alphagage.jpg", altEs: "Sonatest Alphagage+", altEn: "Sonatest Alphagage+" },
+    { nombre: "Mastercan D70", tituloEs: "Sonatest Mastercan D70", tituloEn: "Sonatest Masterscan D70", precio: 0, tipo: "venta", img: "IMG/mastercan.jpg", altEs: "Sonatest Mastercan D70", altEn: "Sonatest Masterscan D70" },
+    { nombre: "Prisma", tituloEs: "Sonatest Prisma", tituloEn: "Sonatest Prisma", precio: 0, tipo: "venta", img: "IMG/prisma.jpg", altEs: "Sonatest Prisma", altEn: "Sonatest Prisma" },
+    { nombre: "VEO+", tituloEs: "Sonatest VEO+", tituloEn: "Sonatest VEO+", precio: 0, tipo: "venta", img: "IMG/veo.jpg", altEs: "Sonatest VEO+", altEn: "Sonatest VEO+" }
+  ],
+  alquiler: [
+    { nombre: "Alquiler Omniscan MX2", tituloEs: "Olympus Omniscan MX2", tituloEn: "Olympus Omniscan MX2", precio: 0, tipo: "alquiler", img: "IMG/omnican.jpg", altEs: "Olympus Omniscan MX2", altEn: "Olympus Omniscan MX2" },
+    { nombre: "Videoscopio", tituloEs: "Videoscopio Industrial", tituloEn: "Industrial Videoscope", precio: 0, tipo: "alquiler", img: "IMG/videoscopio.jpg", altEs: "Videoscopio Industrial", altEn: "Industrial Videoscope" },
+    { nombre: "Yugo Magnético", tituloEs: "Yugo Magnético", tituloEn: "Magnetic Yoke", precio: 0, tipo: "alquiler", img: "IMG/yugo.jpg", altEs: "Yugo Magnético", altEn: "Magnetic Yoke" },
+    { nombre: "Medidor Dureza Leeb", tituloEs: "Medidor de Dureza Leeb", tituloEn: "Leeb Hardness Tester", precio: 0, tipo: "alquiler", img: "IMG/dureza.jpg", altEs: "Medidor de Dureza Leeb", altEn: "Leeb Hardness Tester" },
+    { nombre: "Medidor Espesor", tituloEs: "Medidor de Espesor Olympus", tituloEn: "Olympus Thickness Gauge", precio: 0, tipo: "alquiler", img: "IMG/espesor.jpg", altEs: "Medidor de Espesor Olympus", altEn: "Olympus Thickness Gauge" }
+  ]
+};
+
+const HOME_CAROUSEL_META = {
+  cursos: { titleEs: "Cursos", titleEn: "Courses", linkTextEs: "Ver cursos", linkTextEn: "View courses", href: "certificaciones.html" },
+  venta: { titleEs: "Venta de Equipos", titleEn: "Equipment Sales", linkTextEs: "Ver equipos", linkTextEn: "View equipment", href: "venta-equipos.html" },
+  alquiler: { titleEs: "Alquiler de Equipos", titleEn: "Equipment Rental", linkTextEs: "Ver alquiler", linkTextEn: "View rentals", href: "alquiler-equipos.html" }
+};
+
+const HOME_CAROUSEL_STATE = {};
+
+function shuffleArray(items) {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getHomeCarouselCardsPerView() {
+  if (window.innerWidth <= 600) return 1;
+  if (window.innerWidth <= 1024) return 2;
+  return 3;
+}
+
+function formatHomeCarouselPrice(item) {
+  return item.tipo === "curso" && Number(item.precio || 0) > 0
+    ? `<p class="precio">$${Number(item.precio || 0).toLocaleString("en-US")}</p>`
+    : "";
+}
+
+function getHomeCarouselTitle(item) {
+  return currentLang === "en" ? item.tituloEn : item.tituloEs;
+}
+
+function getHomeCarouselAlt(item) {
+  return currentLang === "en" ? item.altEn : item.altEs;
+}
+
+function renderHomeCarouselItems(key) {
+  const state = HOME_CAROUSEL_STATE[key];
+  if (!state || !state.track) return;
+  state.track.innerHTML = state.items.map(item => `
+    <div class="home-carousel-item">
+      <div class="producto">
+        <img src="${item.img}" alt="${getHomeCarouselAlt(item)}">
+        <h3>${getHomeCarouselTitle(item)}</h3>
+        ${formatHomeCarouselPrice(item)}
+        <button type="button" onclick="agregarCarrito('${item.nombre.replace(/'/g, "\'")}',${Number(item.precio || 0)},'${item.tipo}')">${currentLang === "en" ? "Add to cart" : "Agregar al carrito"}</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function updateHomeCarouselMeta() {
+  const title = document.querySelector('.catalogo-showcase-header .titulo-seccion');
+  const desc = document.querySelector('.catalogo-showcase-header .showcase-description');
+  if (title) title.textContent = getUiText('featuredSolutions');
+  if (desc) desc.textContent = getUiText('featuredSolutionsDesc');
+  document.querySelectorAll('.home-carousel-card').forEach(card => {
+    const key = card.dataset.homeCarousel;
+    const meta = HOME_CAROUSEL_META[key];
+    if (!meta) return;
+    const kicker = card.querySelector('.showcase-kicker');
+    const heading = card.querySelector('.showcase-title');
+    const link = card.querySelector('.home-carousel-link');
+    const prev = card.querySelector('[data-carousel-prev]');
+    const next = card.querySelector('[data-carousel-next]');
+    if (kicker) kicker.textContent = getUiText('dynamicCatalog');
+    if (heading) heading.textContent = currentLang === 'en' ? meta.titleEn : meta.titleEs;
+    if (link) {
+      link.textContent = currentLang === 'en' ? meta.linkTextEn : meta.linkTextEs;
+      link.setAttribute('href', meta.href);
+    }
+    if (prev) prev.setAttribute('aria-label', getUiText('previous'));
+    if (next) next.setAttribute('aria-label', getUiText('next'));
+  });
+}
+
+function updateHomeCarousel(key, preserveIndex = true) {
+  const state = HOME_CAROUSEL_STATE[key];
+  if (!state || !state.track) return;
+  const perView = getHomeCarouselCardsPerView();
+  const maxIndex = Math.max(0, state.items.length - perView);
+  if (!preserveIndex) state.index = 0;
+  state.index = Math.min(state.index, maxIndex);
+  const itemWidth = state.track.querySelector('.home-carousel-item')?.offsetWidth || 0;
+  const gap = parseFloat(window.getComputedStyle(state.track).columnGap || window.getComputedStyle(state.track).gap || '22') || 22;
+  const offset = (itemWidth + gap) * state.index;
+  state.track.style.transform = `translateX(-${offset}px)`;
+  renderHomeCarouselDots(key, maxIndex);
+}
+
+function renderHomeCarouselDots(key, maxIndex) {
+  const state = HOME_CAROUSEL_STATE[key];
+  if (!state || !state.dots) return;
+  const totalDots = Math.max(1, maxIndex + 1);
+  state.dots.innerHTML = Array.from({ length: totalDots }, (_, index) => `
+    <button type="button" class="${index === state.index ? 'active' : ''}" aria-label="${index + 1}" data-carousel-dot="${key}" data-index="${index}"></button>
+  `).join('');
+  state.dots.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+      state.index = Number(button.dataset.index || 0);
+      updateHomeCarousel(key);
+      restartHomeCarouselAutoplay(key);
+    });
+  });
+}
+
+function moveHomeCarousel(key, direction = 1) {
+  const state = HOME_CAROUSEL_STATE[key];
+  if (!state) return;
+  const perView = getHomeCarouselCardsPerView();
+  const maxIndex = Math.max(0, state.items.length - perView);
+  if (maxIndex === 0) {
+    state.index = 0;
+  } else {
+    state.index += direction;
+    if (state.index > maxIndex) state.index = 0;
+    if (state.index < 0) state.index = maxIndex;
+  }
+  updateHomeCarousel(key);
+}
+
+function restartHomeCarouselAutoplay(key) {
+  const state = HOME_CAROUSEL_STATE[key];
+  if (!state) return;
+  clearInterval(state.timer);
+  state.timer = setInterval(() => moveHomeCarousel(key, 1), 4200 + Math.floor(Math.random() * 1200));
+}
+
+function initHomeCarousels() {
+  const section = document.querySelector('.home-carousels');
+  if (!section) return;
+
+  Object.keys(HOME_CAROUSEL_DATA).forEach(key => {
+    if (!HOME_CAROUSEL_STATE[key]) {
+      HOME_CAROUSEL_STATE[key] = {
+        items: shuffleArray(HOME_CAROUSEL_DATA[key]),
+        index: 0,
+        timer: null,
+        track: document.querySelector(`[data-carousel-track="${key}"]`),
+        dots: document.querySelector(`[data-carousel-dots="${key}"]`)
+      };
+    } else {
+      HOME_CAROUSEL_STATE[key].track = document.querySelector(`[data-carousel-track="${key}"]`);
+      HOME_CAROUSEL_STATE[key].dots = document.querySelector(`[data-carousel-dots="${key}"]`);
+    }
+
+    const state = HOME_CAROUSEL_STATE[key];
+    if (!state.track) return;
+
+    renderHomeCarouselItems(key);
+    updateHomeCarousel(key);
+
+    const prev = document.querySelector(`[data-carousel-prev="${key}"]`);
+    const next = document.querySelector(`[data-carousel-next="${key}"]`);
+
+    if (prev && !prev.dataset.bound) {
+      prev.dataset.bound = 'true';
+      prev.addEventListener('click', () => {
+        moveHomeCarousel(key, -1);
+        restartHomeCarouselAutoplay(key);
+      });
+    }
+    if (next && !next.dataset.bound) {
+      next.dataset.bound = 'true';
+      next.addEventListener('click', () => {
+        moveHomeCarousel(key, 1);
+        restartHomeCarouselAutoplay(key);
+      });
+    }
+
+    const shell = state.track.closest('.home-carousel-shell');
+    if (shell && !shell.dataset.bound) {
+      shell.dataset.bound = 'true';
+      shell.addEventListener('mouseenter', () => clearInterval(state.timer));
+      shell.addEventListener('mouseleave', () => restartHomeCarouselAutoplay(key));
+    }
+
+    restartHomeCarouselAutoplay(key);
+  });
+
+  updateHomeCarouselMeta();
+}
+
+function refreshHomeCarousels() {
+  if (!document.querySelector('.home-carousels')) return;
+  updateHomeCarouselMeta();
+  Object.keys(HOME_CAROUSEL_STATE).forEach(key => {
+    renderHomeCarouselItems(key);
+    updateHomeCarousel(key);
+  });
+}
+
+window.addEventListener('resize', () => {
+  if (!document.querySelector('.home-carousels')) return;
+  Object.keys(HOME_CAROUSEL_STATE).forEach(key => updateHomeCarousel(key));
+});
+
+
+function initCatalogShowcase() {
+  const section = document.querySelector(".catalogo-showcase");
+  if (!section) return;
+
+  const stage = section.querySelector(".catalogo-showcase-stage");
+  const panels = Array.from(section.querySelectorAll(".catalogo-panel"));
+  const buttons = Array.from(section.querySelectorAll(".showcase-btn"));
+  const dots = Array.from(section.querySelectorAll(".showcase-dot"));
+  if (!stage || !panels.length) return;
+
+  let currentIndex = Math.max(0, panels.findIndex(panel => panel.classList.contains("active")));
+  let intervalId = null;
+
+  function syncStageHeight() {
+    const activePanel = panels[currentIndex];
+    if (!activePanel) return;
+    stage.style.height = `${activePanel.offsetHeight}px`;
+  }
+
+  function setActive(index) {
+    if (index < 0 || index >= panels.length) return;
+    currentIndex = index;
+    panels.forEach((panel, panelIndex) => {
+      panel.classList.toggle("active", panelIndex === currentIndex);
+    });
+    buttons.forEach((button, buttonIndex) => {
+      const isActive = buttonIndex === currentIndex;
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+    dots.forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === currentIndex));
+    requestAnimationFrame(syncStageHeight);
+  }
+
+  function getRandomNextIndex() {
+    if (panels.length <= 1) return 0;
+    let nextIndex = currentIndex;
+    while (nextIndex === currentIndex) {
+      nextIndex = Math.floor(Math.random() * panels.length);
+    }
+    return nextIndex;
+  }
+
+  function startRotation() {
+    stopRotation();
+    intervalId = setInterval(() => {
+      setActive(getRandomNextIndex());
+    }, 4200);
+  }
+
+  function stopRotation() {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  }
+
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", () => {
+      setActive(index);
+      startRotation();
+    });
+  });
+
+  section.addEventListener("mouseenter", stopRotation);
+  section.addEventListener("mouseleave", startRotation);
+  window.addEventListener("resize", syncStageHeight);
+
+  setActive(currentIndex);
+  startRotation();
+}
+
 function loadCart() {
   try {
     carrito = JSON.parse(localStorage.getItem(APEEX_CART_KEY) || "[]");
@@ -717,16 +1071,18 @@ function loadCart() {
   } catch {
     carrito = [];
   }
-  total = carrito.reduce((sum, item) => sum + Number(item.precio || 0), 0);
+  carrito = carrito.map(item => ({ ...item, tipo: inferItemType(item) }));
+  total = carrito.reduce((sum, item) => sum + (inferItemType(item) === "curso" ? Number(item.precio || 0) : 0), 0);
 }
 
 function saveCart() {
   localStorage.setItem(APEEX_CART_KEY, JSON.stringify(carrito));
 }
 
-window.agregarCarrito = function(nombre, precio) {
-  carrito.push({ nombre, precio });
-  total += Number(precio || 0);
+window.agregarCarrito = function(nombre, precio, tipo = "venta") {
+  const item = { nombre, precio, tipo };
+  carrito.push(item);
+  if (inferItemType(item) === "curso") total += Number(precio || 0);
   saveCart();
   updateCartUI();
   showSiteToast(getUiText("addToCart"));
@@ -734,7 +1090,7 @@ window.agregarCarrito = function(nombre, precio) {
 
 window.eliminarProducto = function(index) {
   if (index < 0 || index >= carrito.length) return;
-  total -= Number(carrito[index].precio || 0);
+  if (inferItemType(carrito[index]) === "curso") total -= Number(carrito[index].precio || 0);
   carrito.splice(index, 1);
   saveCart();
   updateCartUI();
@@ -752,10 +1108,18 @@ window.comprarWhatsapp = function() {
   }
   let mensaje = getUiText("buyHeader");
   carrito.forEach(item => {
+    const tipo = inferItemType(item);
     const translatedName = currentLang === "en" && I18N_MAP[item.nombre] ? I18N_MAP[item.nombre] : item.nombre;
-    mensaje += translatedName + " - $" + Number(item.precio || 0).toLocaleString("en-US") + "%0A";
+    const label = getItemTypeLabel(tipo);
+    if (tipo === "curso" && Number(item.precio || 0) > 0) {
+      mensaje += `${label}: ${translatedName} - $${Number(item.precio || 0).toLocaleString("en-US")}%0A`;
+    } else {
+      mensaje += `${label}: ${translatedName}%0A`;
+    }
   });
-  mensaje += "%0A" + getUiText("totalLabel") + Number(total || 0).toLocaleString("en-US");
+  if (carrito.some(item => inferItemType(item) === "curso" && Number(item.precio || 0) > 0)) {
+    mensaje += "%0A" + getUiText("totalLabel") + Number(total || 0).toLocaleString("en-US");
+  }
   window.open("https://wa.me/51989848075?text=" + mensaje, "_blank");
 };
 
@@ -869,6 +1233,96 @@ function initWhatsappForm() {
   });
 }
 
+
+function initScrollReveal() {
+  const selectors = [
+    ['.hero-content, .hero-moderno-content, .claim-hero-content, .legal-hero-content, .terms-hero-content, .catalogo-showcase-header, .stats-intro, .clientes-container > h2, .clientes-descripcion', 'reveal-up'],
+    ['.hero-equipment, .entrenamiento-img, .nosotros-imagen, .servicio-img', 'reveal-right'],
+    ['.entrenamiento-texto, .nosotros-texto, .detalle-texto, .contacto-info, .contacto-form, .resumen-tecnico', 'reveal-left'],
+    ['.producto, .equipo-card, .card, .metodo-card, .category-card, .cliente-card, .card-servicio, .lista-grid li, .ventajas-grid > div, .sectores-grid > div, .metodo, .claim-card, .provider-box, .info-destacada, .stat-card', 'reveal-scale'],
+    ['section, .mapa-container, .claim-form-section, .legal-content, .legal-sidebar, .terms-content, .terms-sidebar', 'reveal-up']
+  ];
+
+  selectors.forEach(([selector, className]) => {
+    document.querySelectorAll(selector).forEach(el => {
+      if (!el.classList.contains('reveal-up') && !el.classList.contains('reveal-left') && !el.classList.contains('reveal-right') && !el.classList.contains('reveal-scale')) {
+        el.classList.add(className);
+      }
+    });
+  });
+
+  const targets = Array.from(document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale'));
+  if (!targets.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+
+  targets.forEach((el, index) => {
+    el.style.transitionDelay = `${Math.min(index % 6, 5) * 0.05}s`;
+    observer.observe(el);
+  });
+}
+
+function initCounters() {
+  const counters = Array.from(document.querySelectorAll('[data-counter]'));
+  if (!counters.length) return;
+
+  function animateCounter(el) {
+    const target = Number(el.dataset.counter || 0);
+    const duration = 1500;
+    const start = performance.now();
+
+    function frame(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = String(Math.round(target * eased));
+      if (progress < 1) requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    counters.forEach(animateCounter);
+    return;
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.counted) {
+        entry.target.dataset.counted = 'true';
+        animateCounter(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.45 });
+
+  counters.forEach(counter => observer.observe(counter));
+}
+
+function initClientsMarquee() {
+  const track = document.querySelector('[data-clientes-track]');
+  if (!track || track.dataset.enhanced) return;
+  track.dataset.enhanced = 'true';
+  const originals = Array.from(track.children);
+  originals.forEach(item => {
+    const clone = item.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    track.appendChild(clone);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   injectLanguageSwitcher();
   setupMenu();
@@ -876,9 +1330,14 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCart();
   updateCartUI();
   initEquipmentSlider();
+  initClientsMarquee();
+  initHomeCarousels();
+  initCatalogShowcase();
   initContactForm();
   initClaimForm();
   initWhatsappForm();
   applyLanguage(currentLang);
+  initScrollReveal();
+  initCounters();
   setActiveMenuLink();
 });
