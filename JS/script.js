@@ -1135,7 +1135,7 @@ function initContactForm() {
     const formData = new FormData(form);
     formData.append("_captcha", "false");
     try {
-      const response = await fetch("https://formsubmit.co/ajax/APEEXNDTSAC@gmail.com", {
+      const response = await fetch("https://formsubmit.co/ajax/apeexndtsac@gmail.com", {
         method: "POST",
         body: formData,
         headers: { "Accept": "application/json" }
